@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="/javascripts/jquery-3.2.1.min.js")
+  body
+    block content
+		<form action="http://127.0.0.1:3000/search/:title" method="POST">    
+	    	input(type='text' name='title')
+	  		input(type='submit' value='Submit')
