@@ -18,10 +18,14 @@ module.exports = function(app) {
 			videosController.stateVideoController(req, res)
 		});
 	app.route('/search/:title')
-		// .get((req, res) => {
+		.get((req, res) => {
+			videosController.searchVideoController(req, res)
+		});
+		// .post((req, res) => {
 		// 	videosController.searchVideoController(req, res)
 		// });
-		.post((req, res) => {
-			videosController.searchVideoController(req, res)
-		});	
+	app.route('/index')
+		.get((req, res) => {
+			videosController.renderIndexController(req, res)
+		});		
 }

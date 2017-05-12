@@ -3,9 +3,37 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
     script(src="/javascripts/jquery-3.2.1.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin="anonymous")
+    meta(property="fb:app_id" content="638528443022749")
+    meta(property="fb:admins" content="100003796663298")
   body
-    block content
-		<form action="http://127.0.0.1:3000/search/:title" method="POST">    
-	    	input(type='text' name='title')
-	  		input(type='submit' value='Submit')
+    div#fb-root
+    script(type='text/javascript').
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.9&appId=638528443022749";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
+    nav.navbar.navbar-inverse
+      div.container
+        div.navbar-header
+          div.logo-9gag
+            a(href='http://127.0.0.1:3000/index')
+        <ul class="nav navbar-nav navbar-right">
+          
+          if(sessUser == 0)
+            -console.log("out")
+            <li><a href="http://127.0.0.1:3000/reg"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+            <li><a href="http://127.0.0.1:3000/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          else
+            h1 #{sessUser}
+            <li><a href="http://127.0.0.1:3000/reg"><span class="glyphicon glyphicon-user"></span> post</a></li>
+            <li><a href="http://127.0.0.1:3000/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li> 
+        </ul>
+  block content
+    

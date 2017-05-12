@@ -1,0 +1,7 @@
+extends layout
+
+block content
+	<h1>search</h1>
+	each video in videos
+		-var url = video.url.replace("watch?v=", "embed/");
+		iframe(width='660', height='371', src=url)

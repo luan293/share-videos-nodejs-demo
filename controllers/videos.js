@@ -42,9 +42,11 @@ detailsVideoController = function(req, res) {
       } else {
         video.prestate = video.state;
       }
+      console.log('vasva')
       return res.render('detailsVid', {video: video});
     }, function(err) {
-      return res.render('error', err)
+      return res.end(err);
+      //return res.render('error', err)
     })
 }
 
@@ -148,27 +150,70 @@ function updateLike(state, prestate, idvideo){
   });
 }
 
+renderSearchVideoController = function(req, res) {
+
+}
+
 searchVideoController = function(req, res) {
   reqVid = {
     title: req.params.title
   }
+  console.log(reqVid.title)
   searchVideobyName(reqVid.title)
-    .then(function(video) {
-      return res.render('detailsVid', {video: video});
+    .then(function(videos) {
+      //console.log(videos);
+      return res.render('searchVid', {videos: videos});
     }, function(err) {
-      return res.render('error', err)
+      console.log(err)
+      //return res.render('error', {err: error})
     })
 }
 
 function searchVideobyName(name){
   return new Promise(function(resolve, reject) {
-    var queryString = "SELECT * FROM videos WHERE videos.idvideo like %" + id + "%";
+    var queryString = "SELECT * FROM videos WHERE title like '%" + name + "%'";
+    console.log(queryString)
+    conn.query(queryString, function (err, rows) {
+      if (err) {
+        //return res.send(err);
+        console.log('loi search vid')
+        reject(err);
+      } else {
+          console.log(rows);
+          resolve(rows);
+        }
+    });
+  }); 
+}
+
+renderIndexController = function(req, res) {
+  var sessUser = {};
+  if(req.session.userlogin){
+    console.log('da log')   
+    sessUser.iduser = req.session.userlogin.iduser
+  } else {
+    console.log('chua log') 
+    sessUser.iduser = 0;
+  }
+  getAllVideo()
+    .then(function(videos) {
+      //console.log(videos);
+      console.log('id session '+sessUser.iduser) 
+      return res.render('index', {videos: videos, sessUser: sessUser.iduser});
+    }, function(err) {
+      console.log('err')
+      //return res.render('error', {err: error})
+    })
+}
+
+function getAllVideo(){
+  return new Promise(function(resolve, reject) {
+    var queryString = "SELECT * FROM videos";
     conn.query(queryString, function (err, rows) {
       if (err) {
         //return res.send(err);
         reject(err);
       } else {
-          //console.log(rows);
           resolve(rows);
         }
     });
@@ -176,10 +221,12 @@ function searchVideobyName(name){
 }
 
 module.exports = {
+  renderIndexController: renderIndexController,
   renderPostVideoController: renderPostVideoController,
   postVideoController: postVideoController,
   detailsVideoController: detailsVideoController,
   stateVideoController: stateVideoController,
+  renderSearchVideoController: renderSearchVideoController,
   searchVideoController: searchVideoController
   // renderEditUserController: renderEditUserController,
   // editUserController: editUserController,

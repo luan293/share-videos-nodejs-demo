@@ -34,9 +34,9 @@ module.exports = function(app) {
         .delete((req, res) => {// can chuyen ve delete
 			userController.deleteUserController(req, res)
 		});
-	app.route('/search/:name')
-        .get((req, res) => {
-			userController.searchUserController(req, res)
-		});
+	// app.route('/search/:name')
+ //        .get((req, res) => {
+	// 		userController.searchUserController(req, res)
+	// 	});
 
 }

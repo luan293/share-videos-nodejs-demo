@@ -1,89 +1,91 @@
 extends ./layout
 block content
-	script(type='text/javascript').
-		
-		var idvideo = document.URL.replace('http://127.0.0.1:3000/vid/','');
-		var like = #{video.like};
-		var dislike = #{video.dislike};
-		//var id = #{video.idauthor};
-		//if (id == 'null'){
-		//	id = null;
-		//}
+  script(type='text/javascript').   
+    var idvideo = #{video.idvideo};
+    var like = #{video.like};
+    var dislike = #{video.dislike};
+    //var id = #{video.idauthor};
+    //if (id == 'null'){
+    //  id = null;
+    //}
 
-		$(document).ready(function() {	
-			var state = #{video.state};
-			var prestate = #{video.prestate};		
-			checkState = function(state)	{
-				if(state == 1){
-					$('#like-button').val('liked');
-					$('#dislike-button').val('dislike');
-				}else if(like == 2) {
-					$('#like-button').val('like');
-					$('#dislike-button').val('disliked');
-				} else {
-					$('#like-button').val('like');
-					$('#dislike-button').val('dislike');
-				}
-			}
-			checkState(state);
-			
-			$('#like-button').click(function() {
-				if(state == 0){
-					prestate = state;
-					state = 1;
-					console.log('state 0 '+ state);
-				} else if (state == 1){
-					prestate = state;
-					state = 0;
-				} else {
-					prestate = state;
-					state = 1;
-				}
+    $(document).ready(function() {  
+      var state = #{video.state};
+      var prestate = #{video.prestate};   
+      checkState = function(state)  {
+        if(state == 1){
+          $('#like-button').val('liked');
+          $('#dislike-button').val('dislike');
+        }else if(like == 2) {
+          $('#like-button').val('like');
+          $('#dislike-button').val('disliked');
+        } else {
+          $('#like-button').val('like');
+          $('#dislike-button').val('dislike');
+        }
+      }
+      checkState(state);
+      
+      $('#like-button').click(function() {
+        if(state == 0){
+          prestate = state;
+          state = 1;
+          console.log('state 0 '+ state);
+        } else if (state == 1){
+          prestate = state;
+          state = 0;
+        } else {
+          prestate = state;
+          state = 1;
+        }
 
-				console.log('state ngoai '+ state);
-				checkState(state);
-				changeState(state, prestate, idvideo, like, dislike);
-			});
+        console.log('state ngoai '+ state);
+        checkState(state);
+        changeState(state, prestate, idvideo, like, dislike);
+      });
 
-			$('#dislike-button').click(function() {
-				if(state == 0){
-					prestate = state;
-					state = 2;
-				} else if (state == 1){
-					prestate = state;
-					state = 2;
-				} else {
-					prestate = state;
-					state = 0;
-				}
+      $('#dislike-button').click(function() {
+        if(state == 0){
+          prestate = state;
+          state = 2;
+        } else if (state == 1){
+          prestate = state;
+          state = 2;
+        } else {
+          prestate = state;
+          state = 0;
+        }
 
-				checkState(state);
-				changeState(state, prestate, idvideo, like, dislike);
-			});
-			console.log(prestate + " " + state);	
-			changeState = function(state, prestate, idvideo, like, dislike) {
-				console.log(prestate);
-				console.log(state);
-				$.ajax({
-					type: 'POST',
-					data: { state: state, prestate: prestate, idvideo: idvideo, like: like, dislike: dislike },
-					dataType: 'json',
-					url: 'http://127.0.0.1:3000/like',
-					success: function(data1) {
-						console.log(data1);
-					},
-					error: function(xhr, status, err) {
-						console.log(err);
-					},
-					complete: function(data2) {
-						console.log(data2);
-					}
-				});
-			}
-		});
+        checkState(state);
+        changeState(state, prestate, idvideo, like, dislike);
+      });
+      console.log(prestate + " " + state);  
+      changeState = function(state, prestate, idvideo, like, dislike) {
+        console.log(prestate);
+        console.log(state);
+        $.ajax({
+          type: 'POST',
+          data: { state: state, prestate: prestate, idvideo: idvideo, like: like, dislike: dislike },
+          dataType: 'json',
+          url: 'http://127.0.0.1:3000/like',
+          success: function(data1) {
+            console.log(data1);
+          },
+          error: function(xhr, status, err) {
+            console.log(err);
+          },
+          complete: function(data2) {
+            console.log(data2);
+          }
+        });
+      }
+    });
 
-		
-	iframe(width='660', height='371', src=video.url)
-	a(id='like-button', href="javascript:void(0)") like
-	a(id='dislike-button', href="javascript:void(0)") dislike
-
+    
+  iframe(width='660', height='371', src=video.url)
+  a(id='like-button', href="javascript:void(0)") like
+  a(id='dislike-button', href="javascript:void(0)") dislike
+   
+  -var cmtfb = 'http://127.0.0.1:3000/vid/' + video.idvideo;
+  div.fb-comments(data-href=cmtfb, data-numposts="3")
+  

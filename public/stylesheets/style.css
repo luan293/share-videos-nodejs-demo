@@ -1,8 +1,34 @@
 body {
-  padding: 50px;
+  padding: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
+
+.navbar {
+    background-color: #000 !important;
+    box-shadow: 0 1px 0 #333;
+}
+
+.container {
+    width: 1170px;
+}
+
+.logo-9gag	{
+	width: 114px;
+    height: 50px;
+    background: url(../images/logo.png)  center no-repeat;
+    background-size: 114px 50px;
+    margin-left: 0!important;
+}
+
+.title {
+	font-size: 18px;
+}
+
+.info {
+	padding-left: 20px;
+}
+

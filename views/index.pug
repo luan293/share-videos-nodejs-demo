@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to asdas
+  div.listview
+    div.container
+      div.row
+        div.col-md-12
+          each video in videos
+            div.item.col-md-12
+              -var url = video.url.replace("watch?v=", "embed/");
+              -var link = 'http://127.0.0.1:3000/index' + video.idvideo
+              a.video-container.col-md-5(href=link)
+                iframe(src=url) 
+              div.info.col-md-7
+                a.title(href=link) #{video.title}
+
