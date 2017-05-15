@@ -1,4 +1,4 @@
-extends layout
+extends ./layout
 
 block content
   div.listview
@@ -8,7 +8,7 @@ block content
           each video in videos
             div.item.col-md-12
               -var url = video.url.replace("watch?v=", "embed/");
-              -var link = 'http://127.0.0.1:3000/index' + video.idvideo
+              -var link = 'http://127.0.0.1:3000/vid/' + video.idvideo
               a.video-container.col-md-5(href=link)
                 iframe(src=url) 
               div.info.col-md-7

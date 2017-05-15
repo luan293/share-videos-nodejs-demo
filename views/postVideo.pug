@@ -1,9 +1,19 @@
-extends layout
+extends ./layout
 
 block content
-  <h1>post</h1>
-  <form action="http://127.0.0.1:3000/post" method="POST">
-  input(type='text' name='title')
-  input(type='text' name='url')
-  input(type='submit' value='Submit')
-
+  div#new-post
+    div.container
+      div.wrap
+        <div class="row">
+          <div class="col-md-12">
+            <div class="sid wow slideInRight" style="visibility: visible; animation-name: slideInRight;">
+              <h1><i class="glyphicon-plus"></i> New Post</h1>
+              <form action="http://127.0.0.1:3000/post" method="POST">
+                input(type='text' name='title' placeholder="Title" value="")
+                <input type="text" name="url" placeholder="Example: https://www.youtube.com/watch?v=sTAYLA6hIis" value="">          
+                <button type="submit" style="margin-top:20px">Post</button>
+              </form>
+            </div>
+          </div>
+        </div>
+    

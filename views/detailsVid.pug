@@ -14,15 +14,17 @@ block content
       var prestate = #{video.prestate};   
       checkState = function(state)  {
         if(state == 1){
-          $('#like-button').val('liked');
-          $('#dislike-button').val('dislike');
-        }else if(like == 2) {
-          $('#like-button').val('like');
-          $('#dislike-button').val('disliked');
+          $('#like-button').css({'font-size': '20px'});
+          $('#dislike-button').css({'font-size': '14px'});
+        } else if(like == 2) {
+          $('#dislike-button').css({'font-size': '20px'});
+          $('#like-button').css({'font-size': '14px'});
+          
         } else {
-          $('#like-button').val('like');
-          $('#dislike-button').val('dislike');
+          $('#like-button').css({'font-size': '14px'});
+          $('#dislike-button').css({'font-size': '14px'});
         }
+        console.log(state)
       }
       checkState(state);
       
@@ -30,7 +32,6 @@ block content
         if(state == 0){
           prestate = state;
           state = 1;
-          console.log('state 0 '+ state);
         } else if (state == 1){
           prestate = state;
           state = 0;
@@ -38,8 +39,6 @@ block content
           prestate = state;
           state = 1;
         }
-
-        console.log('state ngoai '+ state);
         checkState(state);
         changeState(state, prestate, idvideo, like, dislike);
       });
@@ -47,7 +46,7 @@ block content
       $('#dislike-button').click(function() {
         if(state == 0){
           prestate = state;
-          state = 2;
+          state = 2;         
         } else if (state == 1){
           prestate = state;
           state = 2;
@@ -55,37 +54,36 @@ block content
           prestate = state;
           state = 0;
         }
-
         checkState(state);
         changeState(state, prestate, idvideo, like, dislike);
       });
-      console.log(prestate + " " + state);  
       changeState = function(state, prestate, idvideo, like, dislike) {
-        console.log(prestate);
-        console.log(state);
         $.ajax({
           type: 'POST',
           data: { state: state, prestate: prestate, idvideo: idvideo, like: like, dislike: dislike },
           dataType: 'json',
           url: 'http://127.0.0.1:3000/like',
           success: function(data1) {
-            console.log(data1);
+            //console.log(data1);
           },
           error: function(xhr, status, err) {
-            console.log(err);
+            //console.log(err);
           },
           complete: function(data2) {
-            console.log(data2);
+            //console.log(data2);
           }
         });
       }
     });
 
-    
-  iframe(width='660', height='371', src=video.url)
-  a(id='like-button', href="javascript:void(0)") like
-  a(id='dislike-button', href="javascript:void(0)") dislike
-   
-  -var cmtfb = 'http://127.0.0.1:3000/vid/' + video.idvideo;
-  div.fb-comments(data-href=cmtfb, data-numposts="3")
+  div.container.container-background
+    .wrap
+      .row
+        .details       
+          iframe(width='660', height='371', src=video.url)
+          div.state
+            a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
+            a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
+      -var cmtfb = 'http://127.0.0.1:3000/vid/' + video.idvideo;
+      div.fb-comments(data-href=cmtfb, data-numposts="3")
   

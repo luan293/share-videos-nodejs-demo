@@ -1,14 +1,15 @@
 var userController = require('./users');
-
+var sessUser = {};
 renderPostVideoController = function(req, res) {
   //signed_in(req, res);
+  setSession(req, res);
   userController.checkLogin(req, res);
-  return res.render('postVideo');
+  return res.render('postVideo', {sessUser: sessUser.iduser});
 }
 
 postVideoController = function(req, res) {
   //signed_in(req, res);
-  userController.checkLogin(req, res);
+  checkLogin(req, res);
   var reqVid = {
     title: req.body.title,
     url: req.body.url,
@@ -30,6 +31,7 @@ postVideoController = function(req, res) {
 
 detailsVideoController = function(req, res) {
   //signed_in(req, res);
+  setSession(req, res);
   reqVid = {
     id: req.params.id
   }
@@ -42,8 +44,7 @@ detailsVideoController = function(req, res) {
       } else {
         video.prestate = video.state;
       }
-      console.log('vasva')
-      return res.render('detailsVid', {video: video});
+      return res.render('detailsVid', {video: video, sessUser: sessUser.iduser});
     }, function(err) {
       return res.end(err);
       //return res.render('error', err)
@@ -187,21 +188,14 @@ function searchVideobyName(name){
 }
 
 renderIndexController = function(req, res) {
-  var sessUser = {};
-  if(req.session.userlogin){
-    console.log('da log')   
-    sessUser.iduser = req.session.userlogin.iduser
-  } else {
-    console.log('chua log') 
-    sessUser.iduser = 0;
-  }
+  setSession(req, res);
   getAllVideo()
     .then(function(videos) {
       //console.log(videos);
-      console.log('id session '+sessUser.iduser) 
+      console.log('id session '+ sessUser.iduser) 
       return res.render('index', {videos: videos, sessUser: sessUser.iduser});
     }, function(err) {
-      console.log('err')
+      console.log(err)
       //return res.render('error', {err: error})
     })
 }
@@ -218,6 +212,16 @@ function getAllVideo(){
         }
     });
   }); 
+}
+
+function setSession(req, res) {
+  if(req.session.userlogin){
+    console.log('da log')   
+    sessUser.iduser = req.session.userlogin.iduser
+  } else {
+    console.log('chua log') 
+    sessUser.iduser = 0;
+  }
 }
 
 module.exports = {

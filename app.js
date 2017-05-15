@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+// sessUser = {};
 $ = require('jQuery');
 //var methodOverride = require('method-override')
 // start mysql
@@ -56,6 +57,22 @@ app.use(expressSession({
 //app.use('/', index);
 //app.use('/users', users);
 
+// function myMiddleware (req, res, next) {
+//    if (req.method === 'GET' || req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE') {      
+//       if(req.session.userlogin){
+//         console.log('da log')   
+//         sessUser.iduser = req.session.userlogin.iduser
+//       } else {
+//         console.log('chua log') 
+//         sessUser.iduser = 0;
+//       }
+//    }
+//    // keep executing the router middleware
+//    console.log(sessUser.iduser);
+//    next()
+// }
+
+// app.use(myMiddleware);
 var userRouter = require('./routes/users');
 var videoRouter = require('./routes/videos');
 userRouter(app);  

@@ -1,7 +1,8 @@
-
+var sessUser = {};
 renderRegUserController = function(req, res) {
   //return render("getusers", {params: 'test'})
-  return res.render('regUser');
+  setSession(req, res);
+  return res.render('regUser', {sessUser: sessUser.iduser});
 }
 
 regUserController = function(req, res) {
@@ -39,12 +40,13 @@ function checkLogin(req, res){
 }
 
 rederLoginUserController = function(req, res){
+  setSession(req, res);
   checkLogin(req, res);
   searchUserbyId(req.session.userlogin.iduser)
     .then(function(user) {
       return res.redirect('/index');
     }, function(err) {
-      return res.render('loginUser')
+      return res.render('loginUser', {sessUser: sessUser.iduser})
     })
 }
 
@@ -106,20 +108,16 @@ logoutUserController = function(req, res) {
   });
 }
 
-renderPostVideoController = function(req, res) {
-  //signed_in(req, res);
-  return res.render('postVideo');
+
+function setSession(req, res) {
+  if(req.session.userlogin){
+    console.log('da log')   
+    sessUser.iduser = req.session.userlogin.iduser
+  } else {
+    console.log('chua log') 
+    sessUser.iduser = 0;
+  }
 }
-
-postVideoController = function(req, res) {
-  //signed_in(req, res);
-  var reqVid = {
-    title: req.body.title,
-    url: req.body.url
-  };
-
-}
-
 // renderEditUserController = function(req, res) {
 //   if(req.session.userlogin) {
 //       return res.render('editUser');
@@ -215,8 +213,6 @@ module.exports = {
   rederLoginUserController: rederLoginUserController,
   loginUserController: loginUserController,
   logoutUserController: logoutUserController,
-  renderPostVideoController: renderPostVideoController,
-  postVideoController: postVideoController,
   checkLogin: checkLogin
   // renderEditUserController: renderEditUserController,
   // editUserController: editUserController,
