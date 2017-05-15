@@ -1,4 +1,5 @@
 var userController = require('./users');
+var refUser = firebase.database().ref('chat-log');
 var sessUser = {};
 renderPostVideoController = function(req, res) {
   //signed_in(req, res);
@@ -31,11 +32,11 @@ postVideoController = function(req, res) {
 
 detailsVideoController = function(req, res) {
   //signed_in(req, res);
-  setSession(req, res);
   reqVid = {
     id: req.params.id
   }
-  getVideoById(reqVid.id, req.session.userlogin.iduser)
+  if(setSession(req, res)){
+    getVideoByIdAndState(reqVid.id, req.session.userlogin.iduser)
     .then(function(video) {
       video.url = video.url.replace("watch?v=", "embed/");
       if(video.state == null){
@@ -44,14 +45,39 @@ detailsVideoController = function(req, res) {
       } else {
         video.prestate = video.state;
       }
-      return res.render('detailsVid', {video: video, sessUser: sessUser.iduser});
+      return res.render('detailsVid', {video: video, sessUser: sessUser});
     }, function(err) {
       return res.end(err);
       //return res.render('error', err)
     })
+  } else {
+    getVideoById(reqVid.id)
+    .then(function(video) {
+      video.url = video.url.replace("watch?v=", "embed/");
+      return res.render('detailsVid', {video: video, sessUser: sessUser});
+    }, function(err) {
+      return res.end(err);
+      //return res.render('error', err)
+    })
+  }
+    
 }
 
-function getVideoById(id, idcurrentuser){
+function getVideoById(id){
+  return new Promise(function(resolve, reject) {
+    var queryString = "SELECT * FROM videos WHERE idvideo =" + id;
+    conn.query(queryString, function (err, rows) {
+      if (err) {
+        //return res.send(err);
+        reject(err);
+      } else {
+          resolve(rows[0]);
+        }
+    });
+  });
+}
+
+function getVideoByIdAndState(id, idcurrentuser){
   return new Promise(function(resolve, reject) {
     var queryString = "SELECT * FROM videos LEFT JOIN statevideo ON videos.idvideo = statevideo.idsvideo AND statevideo.iduser = " + idcurrentuser + " WHERE videos.idvideo =" + id;
     conn.query(queryString, function (err, rows) {
@@ -80,7 +106,7 @@ stateVideoController = function(req, res) {
   //console.log(reqVid);
   Promise.all([updateOrInsertState(reqVid.state, reqVid.idcurrentuser, reqVid.idvideo), updateLike(reqVid.state, reqVid.prestate, reqVid.idvideo)])
     .then(function(video) {
-      console.log('pass promise all')
+      console.log(video)
       return res.status(200).json(video);
     }, function(err) {
       console.log("loi promise.all "+err)
@@ -105,7 +131,7 @@ function updateOrInsertState(state, iduser, idvideo){
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows[0]);
+          resolve(rows);
         }
     });
   });
@@ -145,7 +171,7 @@ function updateLike(state, prestate, idvideo){
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows[0]);
+          resolve(rows);
         }
     });
   });
@@ -217,11 +243,37 @@ function getAllVideo(){
 function setSession(req, res) {
   if(req.session.userlogin){
     console.log('da log')   
-    sessUser.iduser = req.session.userlogin.iduser
+    sessUser.iduser = req.session.userlogin.iduser;
+    sessUser.username = req.session.userlogin.username;
+    return true
   } else {
     console.log('chua log') 
     sessUser.iduser = 0;
+    return false;
   }
+}
+
+chatBoxController = function(req, res){
+  setSession(req, res);
+  if(sessUser.iduser === 0){
+    reqChat = {
+      name: 'user-'+ Math.floor((Math.random() * 100000)),
+      text: req.body.text      
+    };
+  } else {
+    reqChat = {
+      name: req.session.userlogin.username,
+      text: req.body.text      
+    };
+  }
+  console.log(reqChat);
+  var idvideo = req.body.idvideo;
+  refIdchat = refUser.child(idvideo);
+  refIdchat.push(reqChat).then(function(chat){
+    return res.status(200).json(reqChat);
+  }, function(err){
+    console.log(err);
+  }) 
 }
 
 module.exports = {
@@ -231,7 +283,8 @@ module.exports = {
   detailsVideoController: detailsVideoController,
   stateVideoController: stateVideoController,
   renderSearchVideoController: renderSearchVideoController,
-  searchVideoController: searchVideoController
+  searchVideoController: searchVideoController,
+  chatBoxController: chatBoxController
   // renderEditUserController: renderEditUserController,
   // editUserController: editUserController,
   // deleteUserController: deleteUserController,

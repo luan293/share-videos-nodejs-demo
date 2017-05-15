@@ -52,6 +52,14 @@ a {
 	color: red;
 }
 
+.chatbox #content { 
+	width: 100%;
+	height: 300px; 
+	margin: 0 0 20px 0; 
+	border: solid 1px #999; 
+	overflow-y: scroll;
+	text-align: left;
+}
 #footer {
 	background: #000 !important;
 	text-align: center;

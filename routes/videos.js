@@ -27,5 +27,9 @@ module.exports = function(app) {
 	app.route('/index')
 		.get((req, res) => {
 			videosController.renderIndexController(req, res)
-		});		
+		});
+	app.route('/chat')
+		.post((req, res) => {
+			videosController.chatBoxController(req, res)
+		});			
 }

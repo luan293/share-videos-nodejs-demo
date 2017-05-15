@@ -5,6 +5,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+firebase = require('firebase');
+var config = {
+    apiKey: "AIzaSyD-NuiVXjoB4p_DETbIDLkarI-58xE1Tys",
+    authDomain: "nodejs-test-f72db.firebaseapp.com",
+    databaseURL: "https://nodejs-test-f72db.firebaseio.com",
+    projectId: "nodejs-test-f72db",
+    storageBucket: "nodejs-test-f72db.appspot.com",
+    messagingSenderId: "60472350954"
+  };
+firebase.initializeApp(config);
 // sessUser = {};
 $ = require('jQuery');
 //var methodOverride = require('method-override')

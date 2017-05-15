@@ -18,11 +18,12 @@ block content
     //  id = null;
     //}
 
-    $(document).ready(function() {  
-      var state = #{video.state};
-      var prestate = #{video.prestate};
-      console.log(state);
-       console.log(prestate); 
+    $(document).ready(function() {
+      var state;
+      var prestate;
+      if (#{sessUser.iduser} != 0) {
+        console.log(#{sessUser.iduser})       
+      } 
       checkState = function(state)  {
         if(state == 1){
           $('#like-button').css({'font-size': '20px'});
@@ -153,13 +154,15 @@ block content
     .wrap
       .row
         .details.col-md-8       
-          iframe(width='660', height='371', src=video.url)          
-          div.state
-            a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
-            a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
+          iframe(width='660', height='371', src=video.url)
+          -console.log(sessUser.iduser)
+          if sessUser.iduser != 0        
+            div.state
+              a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
+              a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
         .chatbox.col-md-4.row
           div#content.col-md-12
-          input#name-chat.col-md-5(type='text' maxlength="10" placeholder="Name")       
+          //input#name-chat.col-md-5(type='text' maxlength="10" placeholder="Name")       
           input#text-chat.col-md-12(type='text' maxlength="200" placeholder="Text" multiple)
           button#send-chat.col-md-4(type="submit") Send
       -var cmtfb = 'http://127.0.0.1:3000/vid/' + video.idvideo;
