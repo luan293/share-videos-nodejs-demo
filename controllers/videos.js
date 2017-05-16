@@ -1,23 +1,25 @@
 var userController = require('./users');
 var refUser = firebase.database().ref('chat-log');
-var sessUser = {};
+//var sessUser = {};
 renderPostVideoController = function(req, res) {
   //signed_in(req, res);
   userController.checkLogin(req, res);
   setSession(req, res);
+  console.log(sessUser);
   return res.render('postVideo', {sessUser: sessUser});
 }
 
 postVideoController = function(req, res) {
   //signed_in(req, res);
   userController.checkLogin(req, res);
-  console.log(sessUser.iduser);
   var reqVid = {
     title: req.body.title,
     url: req.body.url,
     iduser: req.session.userlogin.iduser
   };
-  var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
+  //var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
+  var queryString = `INSERT INTO videos (idauthor, title, url) VALUES ('${reqVid.iduser}', '${reqVid.title}', '${reqVid.url}')`;
+  console.log(queryString);
   conn.query(queryString, function (err, rows) {
     if (err) {
       //return res.send(err);
@@ -67,7 +69,8 @@ detailsVideoController = function(req, res) {
 
 function getVideoById(id){
   return new Promise(function(resolve, reject) {
-    var queryString = "SELECT * FROM videos WHERE idvideo =" + id;
+    //var queryString = "SELECT * FROM videos WHERE idvideo =" + id;
+    var queryString = `SELECT * FROM videos WHERE idvideo = ${id}`;
     conn.query(queryString, function (err, rows) {
       if (err) {
         //return res.send(err);
@@ -79,9 +82,10 @@ function getVideoById(id){
   });
 }
 
-function getVideoByIdAndState(id, idcurrentuser){
+function getVideoByIdAndState(id, idcurrentuser) {
   return new Promise(function(resolve, reject) {
-    var queryString = "SELECT * FROM videos LEFT JOIN statevideo ON videos.idvideo = statevideo.idsvideo AND statevideo.iduser = " + idcurrentuser + " WHERE videos.idvideo =" + id;
+    //var queryString = "SELECT * FROM videos LEFT JOIN statevideo ON videos.idvideo = statevideo.idsvideo AND statevideo.iduser = " + idcurrentuser + " WHERE videos.idvideo =" + id;
+    var queryString = `SELECT * FROM videos LEFT JOIN statevideo ON videos.idvideo = statevideo.idsvideo AND statevideo.iduser = ${idcurrentuser} WHERE videos.idvideo = ${id}`;
     conn.query(queryString, function (err, rows) {
       if (err) {
         //return res.send(err);
@@ -124,51 +128,56 @@ stateVideoController = function(req, res) {
 //   END IF;
 // END
 
-function updateOrInsertState(state, iduser, idvideo){
+function updateOrInsertState(state, iduser, idvideo) {
   return new Promise(function(resolve, reject) {
-    var queryString = "CALL updateOrInsertState('" + state + "','" + iduser + "','" + idvideo + "')";
+    //var queryString = "CALL updateOrInsertState('" + state + "','" + iduser + "','" + idvideo + "')";
+    var queryString = `CALL updateOrInsertState(${state}, ${iduser}, ${idvideo})`;
     //var queryString = "SELECT * FROM statevideo";
     conn.query(queryString, function (err, rows) {
       if (err) {
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows);
-        }
+        resolve(rows);
+      }
     });
   });
 }
 
-function updateLike(state, prestate, idvideo){
+function updateLike(state, prestate, idvideo) {
   return new Promise(function(resolve, reject) {
     var queryString;
 
-    if(state == 0 && prestate == 1){
+    if(state == 0 && prestate == 1) {
       queryString = "UPDATE `videos` SET `like` = `like`-1 WHERE `idvideo` =" + idvideo;
+      //queryString = `UPDATE videos SET like = like-1 WHERE idvideo = ${idvideo}`;
     }
 
-    if(state == 1 && prestate == 2){
+    if(state == 1 && prestate == 2) {
       queryString = "UPDATE `videos` SET `like` = `like`+1, `dislike` = `dislike`-1 WHERE `idvideo` =" + idvideo;
+      //queryString = `UPDATE videos SET like = like+1, dislike = dislike-1 WHERE idvideo = ${idvideo}`;
     }
 
-    if(state == 0 && prestate == 2){
+    if(state == 0 && prestate == 2) {
       queryString = "UPDATE `videos` SET `dislike` = `dislike`-1 WHERE `idvideo` =" + idvideo;
+      //queryString = `UPDATE videos SET dislike = dislike-1 WHERE idvideo = ${idvideo}`;
     }
 
-    if(state == 2 && prestate == 1){
+    if(state == 2 && prestate == 1) {
       queryString = "UPDATE `videos` SET `like` = `like`-1, `dislike` = `dislike`+1 WHERE `idvideo` =" + idvideo;
+      //queryString = `UPDATE videos SET like = like-1, dislike = dislike+1 WHERE idvideo = ${idvideo}`;
     }
 
-    if(state == 1 && prestate == 0){
+    if(state == 1 && prestate == 0) {
       queryString = "UPDATE `videos` SET `like` = `like`+1 WHERE `idvideo` =" + idvideo;
+      //queryString = `UPDATE videos SET like = like+1 WHERE idvideo = ${idvideo}`;
     }
 
-    if(state == 2 && prestate == 0){
+    if(state == 2 && prestate == 0) {
       queryString = "UPDATE `videos` SET `dislike` = `dislike`+1 WHERE `idvideo` =" + idvideo;
     }
-
+    //console.log(queryString)
     conn.query(queryString, function (err, rows) {
-      console.log(queryString);
       if (err) {
         //return res.send(err);
         reject(err);
@@ -193,12 +202,12 @@ searchVideoController = function(req, res) {
       //console.log(videos);
       return res.render('searchVid', {videos: videos});
     }, function(err) {
-      console.log(err)
+      console.log(err);
       //return res.render('error', {err: error})
     })
 }
 
-function searchVideobyName(name){
+function searchVideobyName(name) {
   return new Promise(function(resolve, reject) {
     var queryString = "SELECT * FROM videos WHERE title like '%" + name + "%'";
     console.log(queryString)
@@ -207,10 +216,9 @@ function searchVideobyName(name){
         //return res.send(err);
         console.log('loi search vid')
         reject(err);
-      } else {
-          console.log(rows);
-          resolve(rows);
-        }
+      } else {        
+        resolve(rows);
+      }
     });
   }); 
 }
@@ -235,8 +243,8 @@ function getAllVideo(){
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows);
-        }
+        resolve(rows);
+      }
     });
   }); 
 }
@@ -254,7 +262,7 @@ function setSession(req, res) {
   }
 }
 
-chatBoxController = function(req, res){
+chatBoxController = function(req, res) {
   setSession(req, res);
   if(sessUser.iduser === 0){
     reqChat = {
@@ -272,7 +280,7 @@ chatBoxController = function(req, res){
   refIdchat = refUser.child(idvideo);
   refIdchat.push(reqChat).then(function(chat){
     return res.status(200).json(reqChat);
-  }, function(err){
+  }, function(err) {
     console.log(err);
   }) 
 }
@@ -286,8 +294,4 @@ module.exports = {
   renderSearchVideoController: renderSearchVideoController,
   searchVideoController: searchVideoController,
   chatBoxController: chatBoxController
-  // renderEditUserController: renderEditUserController,
-  // editUserController: editUserController,
-  // deleteUserController: deleteUserController,
-  // searchUserController: searchUserController,
 }

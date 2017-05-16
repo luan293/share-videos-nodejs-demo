@@ -15,7 +15,7 @@ var config = {
     messagingSenderId: "60472350954"
   };
 firebase.initializeApp(config);
-// sessUser = {};
+sessUser = {};
 $ = require('jQuery');
 //var methodOverride = require('method-override')
 // start mysql

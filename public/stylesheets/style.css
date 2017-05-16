@@ -48,6 +48,10 @@ a {
 	margin-right: 90px;
 }
 
+.state p { 
+	margin-right: 90px;
+}
+
 .details {
 	text-align: left;
 }
@@ -59,6 +63,14 @@ a {
 
 #dislike-button {
 	color: red;
+}
+
+#dislike-button1 {
+	color: red;
+}
+
+#like-button1 {
+	color: #4267b2;
 }
 
 .fb-share-button {
@@ -81,6 +93,10 @@ a {
 .fb-comments {
 	float: left;
 	margin-top: 30px;
+}
+
+#preview {
+	margin-top:20px;
 }
 
 #footer {

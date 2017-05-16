@@ -1,166 +1,19 @@
 extends ./layout
+
 block content
-  script(type='text/javascript').
-    var config = {
-        apiKey: 'AIzaSyD-NuiVXjoB4p_DETbIDLkarI-58xE1Tys',
-        authDomain: "nodejs-test-f72db.firebaseapp.com",
-        databaseURL: "https://nodejs-test-f72db.firebaseio.com",
-        projectId: "nodejs-test-f72db",
-        storageBucket: "nodejs-test-f72db.appspot.com",
-        messagingSenderId: "60472350954"
-    };
-    firebase.initializeApp(config);   
-    var idvideo = #{video.idvideo};
-    var like = #{video.like};
-    var dislike = #{video.dislike};
-    //var id = #{video.idauthor};
-    //if (id == 'null'){
-    //  id = null;
-    //}
-
-    $(document).ready(function() {  
-      var state = #{video.state};
-      var prestate = #{video.prestate};
-      console.log(state);
-       console.log(prestate); 
-      checkState = function(state)  {
-        if(state == 1){
-          $('#like-button').css({'font-size': '20px'});
-          $('#dislike-button').css({'font-size': '14px'});
-        } else if(state == 2) {
-          $('#dislike-button').css({'font-size': '20px'});
-          $('#like-button').css({'font-size': '14px'});          
-        } else {
-          $('#like-button').css({'font-size': '14px'});
-          $('#dislike-button').css({'font-size': '14px'});
-        }
-      }
-      checkState(state);
-      
-      $('#like-button').click(function() {
-        if(state == 0){
-          prestate = state;
-          state = 1;
-        } else if (state == 1){
-          prestate = state;
-          state = 0;
-        } else {
-          prestate = state;
-          state = 1;
-        }
-        checkState(state);
-        changeState(state, prestate, idvideo, like, dislike);
-      });
-
-      $('#dislike-button').click(function() {
-        if(state == 0){
-          prestate = state;
-          state = 2;         
-        } else if (state == 1){
-          prestate = state;
-          state = 2;
-        } else {
-          prestate = state;
-          state = 0;
-        }
-        checkState(state);
-        changeState(state, prestate, idvideo, like, dislike);
-      });
-      changeState = function(state, prestate, idvideo, like, dislike) {
-        $.ajax({
-          type: 'POST',
-          data: { state: state, prestate: prestate, idvideo: idvideo, like: like, dislike: dislike },
-          dataType: 'json',
-          url: 'http://127.0.0.1:3000/like',
-          success: function(data1) {
-            //console.log(data1);
-          },
-          error: function(xhr, status, err) {
-            //console.log(err);
-          },
-          complete: function(data2) {
-            console.log('state' + state);
-            console.log('prestate' + prestate);
-            var like = parseInt($('#like-button').text());
-            var dislike = parseInt($('#dislike-button').text());
-            if(state == 0 && prestate == 1){//unlike
-              $('#like-button').text(like-1);
-            }
-
-            if(state == 1 && prestate == 2){//like, undislike
-              $('#like-button').text(like+1);
-              $('#dislike-button').text(dislike-1);
-            }
-
-            if(state == 0 && prestate == 2){//undislike
-              $('#dislike-button').text(dislike-1);
-            }
-
-            if(state == 2 && prestate == 1){//dislike, unlike
-              $('#dislike-button').text(dislike+1);
-              $('#like-button').text(like-1);
-            }
-
-            if(state == 1 && prestate == 0){//like
-              $('#like-button').text(like+1);
-            }
-
-            if(state == 2 && prestate == 0){//dislike
-              $('#dislike-button').text(dislike+1);
-            }
-            console.log('val likeba'+ like);
-          }
-        });
-      }
-
-      $('#send-chat').click(function() {
-        var name = $('#name-chat').val()
-        var text = $('#text-chat').val()
-        
-        reailtimechat(text, name, idvideo);
-      });
-      reailtimechat = function(text, name, idvideo) {
-        console.log(idvideo);
-        $.ajax({
-          type: 'POST',
-          data: { idvideo: idvideo, text: text, name: name },
-          dataType: 'json',
-          url: 'http://127.0.0.1:3000/chat',
-          success: function(data1) {
-
-          },
-          error: function(xhr, status, err) {
-            //console.log(err);
-          },
-          complete: function(data2) {
-            
-          }
-        });
-      }
-      var refChat = firebase.database().ref('chat-log').child(idvideo);
-      resChat = function() {
-        refChat.on('child_added', function(childSnapshot, prevChildKey) {
-          var chats = childSnapshot.val();
-          console.log(chats);
-          var line = "<div class='line-chat'><div class='chat-name'>" + chats.name + ": </div><div class='chat-text'>" + chats.text + "</div></div></br>";
-          $('#content').append(line);
-        });
-      }
-      resChat();
-    });
-
-  div.container.container
-    .wrap
-      .row
-        .details.col-md-8       
-          iframe(width='660', height='371', src=video.url)          
-          div.state
-            a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
-            a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
-        .chatbox.col-md-4.row
-          div#content.col-md-12
-          input#name-chat.col-md-5(type='text' maxlength="10" placeholder="Name")       
-          input#text-chat.col-md-12(type='text' maxlength="200" placeholder="Text" multiple)
-          button#send-chat.col-md-4(type="submit") Send
-      -var cmtfb = 'http://127.0.0.1:3000/vid/' + video.idvideo;
-      div.fb-comments(data-href=cmtfb, data-numposts="3")
+  div#new-post
+    div.container
+      div.wrap
+        <div class="row">
+          <div class="col-md-12">
+            <div class="sid wow slideInRight" style="visibility: visible; animation-name: slideInRight;">
+              <h1><i class="glyphicon-plus"></i> New Post</h1>
+              <form action="http://127.0.0.1:3000/post" method="POST">
+                input(type='text' name='title' placeholder="Title" value="")
+                <input type="text" name="url" placeholder="Example: https://www.youtube.com/watch?v=sTAYLA6hIis" value="">          
+                <button type="submit" style="margin-top:20px">Post</button>
+              </form>
+            </div>
+          </div>
+        </div>
+    

@@ -1,6 +1,16 @@
-extends ./layout
+extends layout
 
 block content
+  script(type='text/javascript').
+    $(document).ready(function() {
+      //$('#submit').prop('disabled', true);
+      $('#preview').click(function() {
+        title = $('[name=title]').val();
+        url = $('[name=url]').val().replace("watch?v=", "embed/");
+        $('#title-preview').text(title);
+        $('#vid-preview').prop('src', url);
+      })
+    })
   div#new-post
     div.container
       div.wrap
@@ -11,9 +21,29 @@ block content
               <form action="http://127.0.0.1:3000/post" method="POST">
                 input(type='text' name='title' placeholder="Title" value="")
                 <input type="text" name="url" placeholder="Example: https://www.youtube.com/watch?v=sTAYLA6hIis" value="">          
-                <button type="submit" style="margin-top:20px">Post</button>
+                <button id='submit' type="submit" style="margin-top:20px">Post</button>                
               </form>
+              <button id='preview' type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Preview</button>
             </div>
+            <!--- modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 id='title-preview' class="modal-title"></h4>
+                  </div>
+                  <div  class="modal-body">
+                    iframe#vid-preview()
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!---- end modal --->
           </div>
         </div>
     

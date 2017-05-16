@@ -156,6 +156,10 @@ block content
             div.state
               a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
               a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
+          else
+            div.state
+              p(id='like-button1', class='glyphicon glyphicon-thumbs-up') #{video.like}
+              p(id='dislike-button1', class='glyphicon glyphicon-thumbs-down') #{video.dislike}  
           </br>
           div.fb-share-button(data-href=fblink, data-layout="button_count", data-size="small", data-mobile-iframe="true")
             a.fb-xfbml-parse-ignore(target="_blank", href=fbshare) Share    

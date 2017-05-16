@@ -25,14 +25,11 @@ html
         div.navbar-header
           a(href='http://127.0.0.1:3000/index')
             div.logo-9gag           
-        <ul class="nav navbar-nav navbar-right">
-          
-          if sessUser.iduser == 0
-            //-console.log("out")
+        <ul class="nav navbar-nav navbar-right">         
+          if sessUser.iduser == 0           
             <li><a href="http://127.0.0.1:3000/reg"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
             <li><a href="http://127.0.0.1:3000/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
           else
-            //h1 #{sessUser}
             <li><a href="http://127.0.0.1:3000/post"><span class="glyphicon glyphicon-plus"></span> post</a></li>
             <li><a href="http://127.0.0.1:3000/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li> 
         </ul>
