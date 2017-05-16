@@ -23,11 +23,11 @@ html
     nav.navbar.navbar-inverse
       div.container
         div.navbar-header
-          div.logo-9gag
-            a(href='http://127.0.0.1:3000/index')
+          a(href='http://127.0.0.1:3000/index')
+            div.logo-9gag           
         <ul class="nav navbar-nav navbar-right">
           
-          if(sessUser == 0)
+          if sessUser.iduser == 0
             //-console.log("out")
             <li><a href="http://127.0.0.1:3000/reg"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
             <li><a href="http://127.0.0.1:3000/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>

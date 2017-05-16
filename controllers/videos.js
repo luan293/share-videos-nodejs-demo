@@ -3,26 +3,26 @@ var refUser = firebase.database().ref('chat-log');
 var sessUser = {};
 renderPostVideoController = function(req, res) {
   //signed_in(req, res);
-  setSession(req, res);
   userController.checkLogin(req, res);
-  return res.render('postVideo', {sessUser: sessUser.iduser});
+  setSession(req, res);
+  return res.render('postVideo', {sessUser: sessUser});
 }
 
 postVideoController = function(req, res) {
   //signed_in(req, res);
-  checkLogin(req, res);
+  userController.checkLogin(req, res);
+  console.log(sessUser.iduser);
   var reqVid = {
     title: req.body.title,
     url: req.body.url,
     iduser: req.session.userlogin.iduser
   };
-  console.log(reqVid);
   var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
   conn.query(queryString, function (err, rows) {
     if (err) {
       //return res.send(err);
       console.log(err);
-      return res.render('postVideo');
+      return res.req('/post');
     }
     else
       return res.redirect('index');
@@ -35,7 +35,7 @@ detailsVideoController = function(req, res) {
   reqVid = {
     id: req.params.id
   }
-  if(setSession(req, res)){
+  if (setSession(req, res)) {
     getVideoByIdAndState(reqVid.id, req.session.userlogin.iduser)
     .then(function(video) {
       video.url = video.url.replace("watch?v=", "embed/");
@@ -53,6 +53,8 @@ detailsVideoController = function(req, res) {
   } else {
     getVideoById(reqVid.id)
     .then(function(video) {
+      video.state = -1;
+      video.prestate = -1;
       video.url = video.url.replace("watch?v=", "embed/");
       return res.render('detailsVid', {video: video, sessUser: sessUser});
     }, function(err) {
@@ -218,8 +220,7 @@ renderIndexController = function(req, res) {
   getAllVideo()
     .then(function(videos) {
       //console.log(videos);
-      console.log('id session '+ sessUser.iduser) 
-      return res.render('index', {videos: videos, sessUser: sessUser.iduser});
+      return res.render('index', {videos: videos, sessUser: sessUser});
     }, function(err) {
       console.log(err)
       //return res.render('error', {err: error})
@@ -257,7 +258,7 @@ chatBoxController = function(req, res){
   setSession(req, res);
   if(sessUser.iduser === 0){
     reqChat = {
-      name: 'user-'+ Math.floor((Math.random() * 100000)),
+      name: req.body.name,
       text: req.body.text      
     };
   } else {

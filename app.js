@@ -64,6 +64,10 @@ app.use(expressSession({
 	resave: false,
 	saveUninitialized: true
 }))
+app.use(function(req,res,next){
+    res.locals.session = req.session;
+    next();
+});
 //app.use('/', index);
 //app.use('/users', users);
 

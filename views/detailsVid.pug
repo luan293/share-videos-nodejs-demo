@@ -1,4 +1,4 @@
-extends ./layout
+extends layout
 block content
   script(type='text/javascript').
     var config = {
@@ -13,16 +13,12 @@ block content
     var idvideo = #{video.idvideo};
     var like = #{video.like};
     var dislike = #{video.dislike};
-    //var id = #{video.idauthor};
-    //if (id == 'null'){
-    //  id = null;
-    //}
-
-    $(document).ready(function() {  
+    var name = 'user-'+ Math.floor((Math.random() * 100000));
+   
+    $(document).ready(function() {
       var state = #{video.state};
       var prestate = #{video.prestate};
-      console.log(state);
-       console.log(prestate); 
+
       checkState = function(state)  {
         if(state == 1){
           $('#like-button').css({'font-size': '20px'});
@@ -114,11 +110,10 @@ block content
       }
 
       $('#send-chat').click(function() {
-        var name = $('#name-chat').val()
-        var text = $('#text-chat').val()
-        
+        var text = $('#text-chat').val();       
         reailtimechat(text, name, idvideo);
       });
+
       reailtimechat = function(text, name, idvideo) {
         console.log(idvideo);
         $.ajax({
@@ -127,41 +122,47 @@ block content
           dataType: 'json',
           url: 'http://127.0.0.1:3000/chat',
           success: function(data1) {
-
+            ///
           },
           error: function(xhr, status, err) {
             //console.log(err);
           },
           complete: function(data2) {
-            
+            //$('#content').scrollTop($('#content')[0].scrollHeight);
+            $('#text-chat').val(""); 
           }
         });
       }
       var refChat = firebase.database().ref('chat-log').child(idvideo);
       resChat = function() {
-        refChat.on('child_added', function(childSnapshot, prevChildKey) {
+        refChat.on('child_added', function(childSnapshot, prevChildKey) {          
           var chats = childSnapshot.val();
-          console.log(chats);
-          var line = "<div class='line-chat'><div class='chat-name'>" + chats.name + ": </div><div class='chat-text'>" + chats.text + "</div></div></br>";
+          var line = "<p>" + chats.name + ": " + chats.text + "</p>";
           $('#content').append(line);
+          $('#content').scrollTop($('#content')[0].scrollHeight);
         });
       }
       resChat();
     });
 
-  div.container.container
+  div.container.container-background
+    -var fblink = 'http://127.0.0.1:3000/vid/' + video.idvideo;
+    -var fbshare = 'https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A3000%2Fvid%2F'+ video.idvideo +'&amp;src=sdkpreparse'
     .wrap
       .row
         .details.col-md-8       
-          iframe(width='660', height='371', src=video.url)          
-          div.state
-            a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
-            a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
+          iframe(src=video.url)          
+          if sessUser.iduser != 0        
+            div.state
+              a(id='like-button', class='glyphicon glyphicon-thumbs-up', href="javascript:void(0)") #{video.like}
+              a(id='dislike-button', class='glyphicon glyphicon-thumbs-down', href="javascript:void(0)") #{video.dislike}
+          </br>
+          div.fb-share-button(data-href=fblink, data-layout="button_count", data-size="small", data-mobile-iframe="true")
+            a.fb-xfbml-parse-ignore(target="_blank", href=fbshare) Share    
         .chatbox.col-md-4.row
           div#content.col-md-12
-          input#name-chat.col-md-5(type='text' maxlength="10" placeholder="Name")       
+          //input#name-chat.col-md-5(type='text' maxlength="10" placeholder="Name")       
           input#text-chat.col-md-12(type='text' maxlength="200" placeholder="Text" multiple)
-          button#send-chat.col-md-4(type="submit") Send
-      -var cmtfb = 'http://127.0.0.1:3000/vid/' + video.idvideo;
-      div.fb-comments(data-href=cmtfb, data-numposts="3")
+          button#send-chat.col-md-4(type="submit") Send     
+      div.fb-comments(data-href=fblink, data-numposts="3")
   

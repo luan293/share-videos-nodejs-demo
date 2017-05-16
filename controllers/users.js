@@ -2,7 +2,7 @@ var sessUser = {};
 renderRegUserController = function(req, res) {
   //return render("getusers", {params: 'test'})
   setSession(req, res);
-  return res.render('regUser', {sessUser: sessUser.iduser});
+  return res.render('regUser', {sessUser: sessUser});
 }
 
 regUserController = function(req, res) {
@@ -33,21 +33,25 @@ regUserController = function(req, res) {
 function checkLogin(req, res){
 //  console.log(req.session.userlogin); 
   if(req.session.userlogin){
-
+    return true;
   } else {
-    return res.render('loginUser');
+    return res.redirect('/login');
   }
 }
 
 rederLoginUserController = function(req, res){
   setSession(req, res);
-  checkLogin(req, res);
-  searchUserbyId(req.session.userlogin.iduser)
+  if(req.session.userlogin){
+    searchUserbyId(req.session.userlogin.iduser)
     .then(function(user) {
       return res.redirect('/index');
     }, function(err) {
-      return res.render('loginUser', {sessUser: sessUser.iduser})
+      return res.render('loginUser', {sessUser: sessUser})
     })
+  } else {
+    return res.render('loginUser', {sessUser: sessUser});
+  }
+  
 }
 
 loginUserController = function(req, res) {
@@ -57,6 +61,7 @@ loginUserController = function(req, res) {
   };
   loginUser(reqUser.email, reqUser.password).then(function(user){
     req.session.userlogin = user[0];
+      
     return res.redirect('/index');
   }, function(err){
     return res.render(err);

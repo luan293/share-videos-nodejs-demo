@@ -37,7 +37,7 @@ a {
 }
 
 .item {
-	margin-bottom: 30px;	
+	margin-top: 30px;	
 }
 
 .wrap {
@@ -48,8 +48,25 @@ a {
 	margin-right: 90px;
 }
 
+.details {
+	text-align: left;
+}
+
+.details iframe {
+	width: 100%;
+    height: 280px;
+}
+
 #dislike-button {
 	color: red;
+}
+
+.fb-share-button {
+	float: left;
+}
+
+.chatbox {
+	float: left;
 }
 
 .chatbox #content { 
@@ -60,6 +77,12 @@ a {
 	overflow-y: scroll;
 	text-align: left;
 }
+
+.fb-comments {
+	float: left;
+	margin-top: 30px;
+}
+
 #footer {
 	background: #000 !important;
 	text-align: center;
