@@ -19,6 +19,8 @@ block content
             <div class="sid wow slideInRight" style="visibility: visible; animation-name: slideInRight;">
               <h1><i class="glyphicon-plus"></i> New Post</h1>
               <form action="http://127.0.0.1:3000/post" method="POST">
+                if validPost
+                  p.error #{validPost}                  
                 input(type='text' name='title' placeholder="Title" value="")
                 <input type="text" name="url" placeholder="Example: https://www.youtube.com/watch?v=sTAYLA6hIis" value="">          
                 <button id='submit' type="submit" style="margin-top:20px">Post</button>                

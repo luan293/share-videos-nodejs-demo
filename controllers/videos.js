@@ -5,7 +5,6 @@ renderPostVideoController = function(req, res) {
   //signed_in(req, res);
   userController.checkLogin(req, res);
   setSession(req, res);
-  console.log(sessUser);
   return res.render('postVideo', {sessUser: sessUser});
 }
 
@@ -17,17 +16,30 @@ postVideoController = function(req, res) {
     url: req.body.url,
     iduser: req.session.userlogin.iduser
   };
-  //var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
-  var queryString = `INSERT INTO videos (idauthor, title, url) VALUES ('${reqVid.iduser}', '${reqVid.title}', '${reqVid.url}')`;
-  conn.query(queryString, function (err, rows) {
-    if (err) {
-      //return res.send(err);
-      return res.redirect('post');
-    } else { 
-      return res.redirect('index');
-    }
-  });
 
+  if(!checkUrlYoutube(reqVid.url)) {
+    return res.render('postVideo', {validPost: 'link không hợp lệ'})
+  } else {
+    //var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
+    var queryString = `INSERT INTO videos (idauthor, title, url) VALUES ('${reqVid.iduser}', '${reqVid.title}', '${reqVid.url}')`;
+    conn.query(queryString, function (err, rows) {
+      if(err) {
+        return res.render('postVideo', {validPost: 'link không hợp lệ'})
+      } else { 
+        return res.redirect('index');
+      }
+    });
+  }
+}
+
+function checkUrlYoutube(url) {
+
+  if(url.search('https://www.youtube.com/watch?') != 0) {
+    console.log(url.search('https://www.youtube.com/watch?'))
+    return false;
+  } else {
+    return true;
+  }
 }
 
 detailsVideoController = function(req, res) {
