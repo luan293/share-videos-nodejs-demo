@@ -150,7 +150,8 @@ block content
     -var fbshare = 'https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A3000%2Fvid%2F'+ video.idvideo +'&amp;src=sdkpreparse'
     .wrap
       .row
-        .details.col-md-8       
+        .details.col-md-8
+          h4 #{video.title}       
           iframe(src=video.url)          
           if sessUser.iduser != 0        
             div.state

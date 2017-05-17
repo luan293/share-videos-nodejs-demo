@@ -18,13 +18,15 @@ postVideoController = function(req, res) {
   };
 
   if(!checkUrlYoutube(reqVid.url)) {
-    return res.render('postVideo', {validPost: 'link không hợp lệ'})
+    return res.render('postVideo', {validPostUrl: 'link không hợp lệ'})
+  } else if(reqVid.title == "") {
+    return res.render('postVideo', {validPostTitle: 'Title không được trống'})
   } else {
     //var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
     var queryString = `INSERT INTO videos (idauthor, title, url) VALUES ('${reqVid.iduser}', '${reqVid.title}', '${reqVid.url}')`;
     conn.query(queryString, function (err, rows) {
       if(err) {
-        return res.render('postVideo', {validPost: 'link không hợp lệ'})
+        return res.render('postVideo', {validPostUrl: 'link không hợp lệ'})
       } else { 
         return res.redirect('index');
       }
@@ -33,9 +35,7 @@ postVideoController = function(req, res) {
 }
 
 function checkUrlYoutube(url) {
-
   if(url.search('https://www.youtube.com/watch?') != 0) {
-    console.log(url.search('https://www.youtube.com/watch?'))
     return false;
   } else {
     return true;
