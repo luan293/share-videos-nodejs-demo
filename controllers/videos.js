@@ -125,7 +125,6 @@ stateVideoController = function(req, res) {
 //     insert into statevideo (iduser, idsvideo, state) values (iduser1, idvideo, state);
 //   END IF;
 // END
-
 function updateOrInsertState(state, iduser, idvideo) {
   return new Promise(function(resolve, reject) {
     //var queryString = "CALL updateOrInsertState('" + state + "','" + iduser + "','" + idvideo + "')";
