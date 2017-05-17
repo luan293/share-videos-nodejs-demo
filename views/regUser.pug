@@ -1,16 +1,21 @@
 extends layout  
 block content
   <div class="container">
-    div.wrap
+    .col-md-3
+    div.wrap.col-md-6
       <div class="row">
         <div class="col-md-12">
           <div class="sid wow slideInRight" style="visibility: visible; animation-name: slideInRight;">
             <h1><i class="glyphicon-lock"></i> Register </h1>
             <form action="http://127.0.0.1:3000/reg" method="POST">
-              if validReg
-                p.error #{validReg}
+              if validName
+                p.error #{validName}             
               input(type='text' name='username' placeholder="Name" value="")
+              if validEmail
+                p.error #{validEmail}
               <input type="text" name="email" placeholder="Email" value="">
+              if validPw
+                p.error #{validPw}
               <input type="password" name="password" placeholder="Password" style="margin-bottom:10px" value="">           
               <button type="submit" style="margin-top:20px">Send</button>
             </form>

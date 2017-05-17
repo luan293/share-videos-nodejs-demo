@@ -13,12 +13,12 @@ block content
     var idvideo = #{video.idvideo};
     var like = #{video.like};
     var dislike = #{video.dislike};
-    var name = 'user-'+ Math.floor((Math.random() * 100000));
    
     $(document).ready(function() {
       var state = #{video.state};
       var prestate = #{video.prestate};
 
+      //hiệu ứng nút like
       checkState = function(state)  {
         if(state == 1){
           $('#like-button').css({'font-size': '20px'});
@@ -62,6 +62,8 @@ block content
         checkState(state);
         changeState(state, prestate, idvideo, like, dislike);
       });
+
+      //update like/dislike
       changeState = function(state, prestate, idvideo, like, dislike) {
         $.ajax({
           type: 'POST',
@@ -74,9 +76,7 @@ block content
           error: function(xhr, status, err) {
             //console.log(err);
           },
-          complete: function(data2) {
-            console.log('state' + state);
-            console.log('prestate' + prestate);
+          complete: function(data2) {  //đổi value like/dislike khi ajax nhận res
             var like = parseInt($('#like-button').text());
             var dislike = parseInt($('#dislike-button').text());
             if(state == 0 && prestate == 1){//unlike
@@ -109,16 +109,16 @@ block content
         });
       }
 
+      //////////////////////////////////////////////////
       $('#send-chat').click(function() {
         var text = $('#text-chat').val();       
-        reailtimechat(text, name, idvideo);
+        reailtimechat(text, idvideo);
       });
 
-      reailtimechat = function(text, name, idvideo) {
-        console.log(idvideo);
+      reailtimechat = function(text, idvideo) {
         $.ajax({
           type: 'POST',
-          data: { idvideo: idvideo, text: text, name: name },
+          data: { idvideo: idvideo, text: text },
           dataType: 'json',
           url: 'http://127.0.0.1:3000/chat',
           success: function(data1) {
@@ -128,14 +128,14 @@ block content
             //console.log(err);
           },
           complete: function(data2) {
-            //$('#content').scrollTop($('#content')[0].scrollHeight);
+            //$('#content').scrollTop($('#content')[0].scrollHeight); //scroll về dòng cuối cùng (mới nhất)
             $('#text-chat').val(""); 
           }
         });
       }
       var refChat = firebase.database().ref('chat-log').child(idvideo);
       resChat = function() {
-        refChat.on('child_added', function(childSnapshot, prevChildKey) {          
+        refChat.on('child_added', function(childSnapshot, prevChildKey) {   //nhận res từ firebase         
           var chats = childSnapshot.val();
           var line = "<p>" + chats.name + ": " + chats.text + "</p>";
           $('#content').append(line);
@@ -148,7 +148,8 @@ block content
   div.container.container-background
     -var fblink = 'http://127.0.0.1:3000/vid/' + video.idvideo;
     -var fbshare = 'https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A3000%2Fvid%2F'+ video.idvideo +'&amp;src=sdkpreparse'
-    .wrap
+    div.col-md-2
+    .wrap.col-md-8
       .row
         .details.col-md-8
           h4 #{video.title}       

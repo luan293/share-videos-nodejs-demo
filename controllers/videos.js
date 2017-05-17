@@ -1,25 +1,27 @@
 var userController = require('./users');
 var refUser = firebase.database().ref('chat-log');
+var randomname;  //random username chat khi không login
 //var sessUser = {};
 renderPostVideoController = function(req, res) {
   //signed_in(req, res);
-  userController.checkLogin(req, res);
-  setSession(req, res);
+  userController.checkLogin(req, res); // return về trang login khi chưa login
+  setSession(req, res);                // set session để view sử dụng (check thanh menu login/signin... ở layout)
+                                       // chưa tìm đc cách khác   
   return res.render('postVideo', {sessUser: sessUser});
 }
 
 postVideoController = function(req, res) {
   //signed_in(req, res);
-  userController.checkLogin(req, res);
+  userController.checkLogin(req, res); 
   var reqVid = {
     title: req.body.title,
     url: req.body.url,
     iduser: req.session.userlogin.iduser
   };
 
-  if(!checkUrlYoutube(reqVid.url)) {
+  if(!checkUrlYoutube(reqVid.url)) {        //check url
     return res.render('postVideo', {validPostUrl: 'link không hợp lệ'})
-  } else if(reqVid.title == "") {
+  } else if(reqVid.title == "") {           //check title
     return res.render('postVideo', {validPostTitle: 'Title không được trống'})
   } else {
     //var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
@@ -34,6 +36,7 @@ postVideoController = function(req, res) {
   }
 }
 
+// check url
 function checkUrlYoutube(url) {
   if(url.search('https://www.youtube.com/watch?') != 0) {
     return false;
@@ -48,11 +51,13 @@ detailsVideoController = function(req, res) {
     id: req.params.id
   };
 
-  if(setSession(req, res)) {
+  randomname = 'user-'+ Math.floor((Math.random() * 100000));     //random username chat khi không login
+  
+  if(setSession(req, res)) {          // check user có login hay không  
     getVideoByIdAndState(reqVid.id, req.session.userlogin.iduser)
     .then(function(video) {
       video.url = video.url.replace("watch?v=", "embed/");
-      if(video.state == null){
+      if(video.state == null){        // lần đầu chưa like/dislike => state = null
         video.state = 0;
         video.prestate = 0;
       } else {
@@ -93,6 +98,7 @@ function getVideoById(id) {
   });
 }
 
+// left join 2 bảng videos và statevideo để lấy thông tin like/dislike của user hiện tại(idcurrentuser) đối với video hiện tại(id)
 function getVideoByIdAndState(id, idcurrentuser) {
   return new Promise(function(resolve, reject) {
     //var queryString = "SELECT * FROM videos LEFT JOIN statevideo ON videos.idvideo = statevideo.idsvideo AND statevideo.iduser = " + idcurrentuser + " WHERE videos.idvideo =" + id;
@@ -108,6 +114,7 @@ function getVideoByIdAndState(id, idcurrentuser) {
   });
 }
 
+//update/insert bảng state và update cột like/dislike bảng videos
 stateVideoController = function(req, res) {
   //signed_in(req, res);
   reqVid = {
@@ -116,14 +123,12 @@ stateVideoController = function(req, res) {
     like: req.body.like,
     dislike: req.body.dislike,
     prestate: req.body.prestate,
-    //idstate: req.body.id, //idstatevideo
     idcurrentuser: req.session.userlogin.iduser
   };
-  //console.log(reqVid);
+
   Promise.all([updateOrInsertState(reqVid.state, reqVid.idcurrentuser, reqVid.idvideo), updateLike(reqVid.state, reqVid.prestate, reqVid.idvideo)])
     .then(function(video) {
-      console.log(video)
-      return res.status(200).json(video);
+      return res.status(200).json(video);  //ajax
     }, function(err) {
       console.log("loi promise.all "+err)
     })
@@ -141,7 +146,6 @@ function updateOrInsertState(state, iduser, idvideo) {
   return new Promise(function(resolve, reject) {
     //var queryString = "CALL updateOrInsertState('" + state + "','" + iduser + "','" + idvideo + "')";
     var queryString = `CALL updateOrInsertState(${state}, ${iduser}, ${idvideo})`;
-    //var queryString = "SELECT * FROM statevideo";
     conn.query(queryString, function(err, rows) {
       if (err) {
         //return res.send(err);
@@ -197,40 +201,40 @@ function updateLike(state, prestate, idvideo) {
   });
 }
 
-renderSearchVideoController = function(req, res) {
+// renderSearchVideoController = function(req, res) {
 
-}
+// }
 
-searchVideoController = function(req, res) {
-  reqVid = {
-    title: req.params.title
-  };
-  searchVideobyName(reqVid.title)
-    .then(function(videos) {
-      //console.log(videos);
-      return res.render('searchVid', {videos: videos});
-    }, function(err) {
-      console.log(err);
-      //return res.render('error', {err: error})
-    });
-}
+// searchVideoController = function(req, res) {
+//   reqVid = {
+//     title: req.params.title
+//   };
+//   searchVideobyName(reqVid.title)
+//     .then(function(videos) {
+//       //console.log(videos);
+//       return res.render('searchVid', {videos: videos});
+//     }, function(err) {
+//       console.log(err);
+//       //return res.render('error', {err: error})
+//     });
+// }
 
-function searchVideobyName(name) {
-  return new Promise(function(resolve, reject) {
-    //var queryString = "SELECT * FROM videos WHERE title like '%" + name + "%'";
-    var queryString = `SELECT * FROM videos WHERE title like %${name}%`;
-    console.log(queryString)
-    conn.query(queryString, function(err, rows) {
-      if (err) {
-        //return res.send(err);
-        console.log('loi search vid')
-        reject(err);
-      } else {        
-        resolve(rows);
-      }
-    });
-  }); 
-}
+// function searchVideobyName(name) {
+//   return new Promise(function(resolve, reject) {
+//     //var queryString = "SELECT * FROM videos WHERE title like '%" + name + "%'";
+//     var queryString = `SELECT * FROM videos WHERE title like %${name}%`;
+//     console.log(queryString)
+//     conn.query(queryString, function(err, rows) {
+//       if (err) {
+//         //return res.send(err);
+//         console.log('loi search vid')
+//         reject(err);
+//       } else {        
+//         resolve(rows);
+//       }
+//     });
+//   }); 
+// }
 
 renderIndexController = function(req, res) {
   setSession(req, res);
@@ -271,9 +275,9 @@ function setSession(req, res) {
 
 chatBoxController = function(req, res) {
   setSession(req, res);
-  if(sessUser.iduser === 0) {
+  if(sessUser.iduser === 0) { //chưa log in
     reqChat = {
-      name: req.body.name,
+      name: randomname,
       text: req.body.text      
     };
   } else {
@@ -282,7 +286,6 @@ chatBoxController = function(req, res) {
       text: req.body.text      
     };
   }
-  console.log(reqChat);
   var idvideo = req.body.idvideo;
   refIdchat = refUser.child(idvideo);
   refIdchat.push(reqChat).then(function(chat) {
@@ -298,7 +301,7 @@ module.exports = {
   postVideoController: postVideoController,
   detailsVideoController: detailsVideoController,
   stateVideoController: stateVideoController,
-  renderSearchVideoController: renderSearchVideoController,
-  searchVideoController: searchVideoController,
+  //renderSearchVideoController: renderSearchVideoController,
+  //searchVideoController: searchVideoController,
   chatBoxController: chatBoxController
 }
