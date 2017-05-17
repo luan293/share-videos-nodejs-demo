@@ -1,5 +1,4 @@
 extends layout
-
 block content
   <div class="container">
     div.wrap
@@ -8,6 +7,8 @@ block content
           <div class="sid wow slideInRight" style="visibility: visible; animation-name: slideInRight;">
             <h1><i class="glyphicon-lock"></i> Register </h1>
             <form action="http://127.0.0.1:3000/reg" method="POST">
+              if validReg
+                p.error Email da duoc su dung
               input(type='text' name='username' placeholder="Name" value="")
               <input type="text" name="email" placeholder="Email" value="">
               <input type="password" name="password" placeholder="Password" style="margin-bottom:10px" value="">           

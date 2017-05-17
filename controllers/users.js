@@ -12,22 +12,43 @@ regUserController = function(req, res) {
     password: req.body.password
   };
   //open connection
-  console.log(reqUser);
-  //var queryString = "INSERT INTO users (username, email, password) VALUES ('" + reqUser.username + "','" + reqUser.email + "','" + reqUser.password + "')";
-  var queryString = `insert into users (username, email, password) values ('${reqUser.username}', '${reqUser.email}', '${reqUser.password}')`;
-  //create, excute query
-  //var queryString = "SELECT * FROM users";
-  conn.query(queryString, function (err, rows) {
-    if (err) {
-      //return res.send(err);
-      console.log(err);
-      return res.render('regUser');
-    }
-    else
-      return res.redirect('index');
-  });
+  searchUserbyEmail(reqUser.email)
+    .then(function(users){
+      if(users.length > 0) {       
+        return res.render('regUser', {validReg: 'Email đã được dùng'});
+      } else {
+        //var queryString = "INSERT INTO users (username, email, password) VALUES ('" + reqUser.username + "','" + reqUser.email + "','" + reqUser.password + "')";
+        var queryString = `insert into users (username, email, password) values ('${reqUser.username}', '${reqUser.email}', '${reqUser.password}')`;
+        //create, excute query
+        //var queryString = "SELECT * FROM users";
+        conn.query(queryString, function (err, rows) {
+          if (err) {
+            //return res.send(err);
+            console.log(err);
+            return res.render('regUser');
+          }
+          else
+            return res.redirect('index');
+        });
+      }
+    });
   //close connection
   //conn.end();
+}
+
+function searchUserbyEmail(email) {
+  return new Promise(function(resolve, reject) {
+    //var queryString = "SELECT * FROM users WHERE `iduser` = '" + id +"'";
+    var queryString = `SELECT * FROM users WHERE email = '${email}'`;
+    conn.query(queryString, function(err, rows) {
+      if(err) {
+        //return res.send(err);
+        reject('khong tim thay user');
+      } else {
+        resolve(rows);
+      }
+    });
+  });
 }
 
 function checkLogin(req, res){

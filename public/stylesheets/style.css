@@ -99,6 +99,10 @@ a {
 	margin-top:20px;
 }
 
+.error {
+	color: red;
+}
+
 #footer {
 	background: #000 !important;
 	text-align: center;
