@@ -82,12 +82,14 @@ loginUserController = function(req, res) {
   };
 
   loginUser(reqUser.email, reqUser.password).then(function(user) {
-    req.session.userlogin = user[0];
-      
-    return res.redirect('/index');
+    if(user.length > 0) {
+      req.session.userlogin = user[0];      
+      return res.redirect('/index');
+    } else {
+      return res.render('loginUser', {validLogin: 'Sai password hoặc email'});
+    }   
   }, function(err) {
-    // chưa xử lý
-    return res.render(err);
+    return res.render('loginUser', {validLogin: err});
   });
 }
 
@@ -98,7 +100,7 @@ function searchUserbyId(id) {
     conn.query(queryString, function(err, rows) {
       if(err) {
         //return res.send(err);
-        reject('khong tim thay user');
+        reject(err);
       } else {
         resolve(rows);
       }
@@ -114,7 +116,7 @@ function loginUser(email, password) {
       if(err) {
         //return res.send(err);
         //console.log(err);
-        reject('sai pass');
+        reject(err);
       } else {
         resolve(rows);
       }
