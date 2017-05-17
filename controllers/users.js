@@ -46,8 +46,8 @@ rederLoginUserController = function(req, res){
     .then(function(user) {
       return res.redirect('/index');
     }, function(err) {
-      return res.render('loginUser')
-    })
+      return res.render('loginUser');
+    });
   } else {
     return res.render('loginUser', {sessUser: sessUser});
   }
@@ -59,27 +59,28 @@ loginUserController = function(req, res) {
     email: req.body.email,
     password: req.body.password
   };
-  loginUser(reqUser.email, reqUser.password).then(function(user){
+
+  loginUser(reqUser.email, reqUser.password).then(function(user) {
     req.session.userlogin = user[0];
       
     return res.redirect('/index');
-  }, function(err){
+  }, function(err) {
     // chưa xử lý
     return res.render(err);
-  })
+  });
 }
 
 function searchUserbyId(id) {
   return new Promise(function(resolve, reject) {
     //var queryString = "SELECT * FROM users WHERE `iduser` = '" + id +"'";
-    var queryString = `SELECT * FROM users WHERE iduser = '${id}'` ;
-    conn.query(queryString, function (err, rows) {
-      if (err) {
+    var queryString = `SELECT * FROM users WHERE iduser = '${id}'`;
+    conn.query(queryString, function(err, rows) {
+      if(err) {
         //return res.send(err);
         reject('khong tim thay user');
-      }
-      else
+      } else {
         resolve(rows);
+      }
     });
   });
 }
@@ -89,13 +90,13 @@ function loginUser(email, password) {
     //var queryString = "SELECT * FROM users WHERE `email` = '" + email + "' AND `password` = '" + password + "'";
     var queryString = `SELECT * FROM users WHERE email =  '${email}'  AND password = '${password}'`;
     conn.query(queryString, function (err, rows) {
-      if (err) {
+      if(err) {
         //return res.send(err);
-        console.log(err);
+        //console.log(err);
         reject('sai pass');
-      }
-      else
+      } else {
         resolve(rows);
+      }
     });
   });
 }
@@ -103,7 +104,7 @@ function loginUser(email, password) {
 logoutUserController = function(req, res) {
   //signed_in(req, res);
   req.session.destroy(function(err){
-    if (err)
+    if(err)
       return res.end(err);
     else
       return res.redirect('/login');
@@ -112,7 +113,7 @@ logoutUserController = function(req, res) {
 
 function setSession(req, res) {
   if(req.session.userlogin){
-    sessUser.iduser = req.session.userlogin.iduser
+    sessUser.iduser = req.session.userlogin.iduser;
   } else {
     sessUser.iduser = 0;
   }

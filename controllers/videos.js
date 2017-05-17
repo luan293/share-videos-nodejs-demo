@@ -19,15 +19,13 @@ postVideoController = function(req, res) {
   };
   //var queryString = "INSERT INTO videos (idauthor, title, url) VALUES ('" + reqVid.iduser + "','" + reqVid.title + "','" + reqVid.url + "')";
   var queryString = `INSERT INTO videos (idauthor, title, url) VALUES ('${reqVid.iduser}', '${reqVid.title}', '${reqVid.url}')`;
-  console.log(queryString);
   conn.query(queryString, function (err, rows) {
     if (err) {
       //return res.send(err);
-      console.log(err);
-      return res.req('/post');
-    }
-    else
+      return res.redirect('post');
+    } else { 
       return res.redirect('index');
+    }
   });
 
 }
@@ -36,8 +34,9 @@ detailsVideoController = function(req, res) {
   //signed_in(req, res);
   reqVid = {
     id: req.params.id
-  }
-  if (setSession(req, res)) {
+  };
+
+  if(setSession(req, res)) {
     getVideoByIdAndState(reqVid.id, req.session.userlogin.iduser)
     .then(function(video) {
       video.url = video.url.replace("watch?v=", "embed/");
@@ -51,7 +50,7 @@ detailsVideoController = function(req, res) {
     }, function(err) {
       return res.end(err);
       //return res.render('error', err)
-    })
+    });
   } else {
     getVideoById(reqVid.id)
     .then(function(video) {
@@ -67,7 +66,7 @@ detailsVideoController = function(req, res) {
     
 }
 
-function getVideoById(id){
+function getVideoById(id) {
   return new Promise(function(resolve, reject) {
     //var queryString = "SELECT * FROM videos WHERE idvideo =" + id;
     var queryString = `SELECT * FROM videos WHERE idvideo = ${id}`;
@@ -76,8 +75,8 @@ function getVideoById(id){
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows[0]);
-        }
+        resolve(rows[0]);
+      }
     });
   });
 }
@@ -91,8 +90,8 @@ function getVideoByIdAndState(id, idcurrentuser) {
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows[0]);
-        }
+        resolve(rows[0]);
+      }
     });
   });
 }
@@ -107,8 +106,7 @@ stateVideoController = function(req, res) {
     prestate: req.body.prestate,
     //idstate: req.body.id, //idstatevideo
     idcurrentuser: req.session.userlogin.iduser
-  }
-  console.log(reqVid.prestate + reqVid.state)
+  };
   //console.log(reqVid);
   Promise.all([updateOrInsertState(reqVid.state, reqVid.idcurrentuser, reqVid.idvideo), updateLike(reqVid.state, reqVid.prestate, reqVid.idvideo)])
     .then(function(video) {
@@ -133,7 +131,7 @@ function updateOrInsertState(state, iduser, idvideo) {
     //var queryString = "CALL updateOrInsertState('" + state + "','" + iduser + "','" + idvideo + "')";
     var queryString = `CALL updateOrInsertState(${state}, ${iduser}, ${idvideo})`;
     //var queryString = "SELECT * FROM statevideo";
-    conn.query(queryString, function (err, rows) {
+    conn.query(queryString, function(err, rows) {
       if (err) {
         //return res.send(err);
         reject(err);
@@ -182,8 +180,8 @@ function updateLike(state, prestate, idvideo) {
         //return res.send(err);
         reject(err);
       } else {
-          resolve(rows);
-        }
+        resolve(rows);
+      }
     });
   });
 }
@@ -195,8 +193,7 @@ renderSearchVideoController = function(req, res) {
 searchVideoController = function(req, res) {
   reqVid = {
     title: req.params.title
-  }
-  console.log(reqVid.title)
+  };
   searchVideobyName(reqVid.title)
     .then(function(videos) {
       //console.log(videos);
@@ -204,14 +201,15 @@ searchVideoController = function(req, res) {
     }, function(err) {
       console.log(err);
       //return res.render('error', {err: error})
-    })
+    });
 }
 
 function searchVideobyName(name) {
   return new Promise(function(resolve, reject) {
-    var queryString = "SELECT * FROM videos WHERE title like '%" + name + "%'";
+    //var queryString = "SELECT * FROM videos WHERE title like '%" + name + "%'";
+    var queryString = `SELECT * FROM videos WHERE title like %${name}%`;
     console.log(queryString)
-    conn.query(queryString, function (err, rows) {
+    conn.query(queryString, function(err, rows) {
       if (err) {
         //return res.send(err);
         console.log('loi search vid')
@@ -239,7 +237,7 @@ function getAllVideo(){
   return new Promise(function(resolve, reject) {
     var queryString = "SELECT * FROM videos";
     conn.query(queryString, function (err, rows) {
-      if (err) {
+      if(err) {
         //return res.send(err);
         reject(err);
       } else {
@@ -250,13 +248,11 @@ function getAllVideo(){
 }
 
 function setSession(req, res) {
-  if(req.session.userlogin){
-    console.log('da log')   
+  if(req.session.userlogin){   
     sessUser.iduser = req.session.userlogin.iduser;
     sessUser.username = req.session.userlogin.username;
-    return true
+    return true;
   } else {
-    console.log('chua log') 
     sessUser.iduser = 0;
     return false;
   }
@@ -264,7 +260,7 @@ function setSession(req, res) {
 
 chatBoxController = function(req, res) {
   setSession(req, res);
-  if(sessUser.iduser === 0){
+  if(sessUser.iduser === 0) {
     reqChat = {
       name: req.body.name,
       text: req.body.text      
@@ -278,11 +274,11 @@ chatBoxController = function(req, res) {
   console.log(reqChat);
   var idvideo = req.body.idvideo;
   refIdchat = refUser.child(idvideo);
-  refIdchat.push(reqChat).then(function(chat){
+  refIdchat.push(reqChat).then(function(chat) {
     return res.status(200).json(reqChat);
   }, function(err) {
     console.log(err);
-  }) 
+  });
 }
 
 module.exports = {
