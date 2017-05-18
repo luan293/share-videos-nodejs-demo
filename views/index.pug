@@ -2,15 +2,15 @@ extends ./layout
 
 block content
   div.listview
-    div.container
+    div.container.container-background
       div.row
         div.col-md-12
           each video in videos
-            div.item.col-md-12
+            div.item.col-md-6
               -var url = video.url.replace("watch?v=", "embed/");
               -var link = 'http://127.0.0.1:3000/vid/' + video.idvideo
-              a.video-container.col-md-5(href=link)
+              a.video-container.col-md-8(href=link)
                 iframe(src=url) 
-              div.info.col-md-7
+              div.info.col-md-4
                 a.title(href=link) #{video.title}
 
